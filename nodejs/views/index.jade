@@ -1,0 +1,78 @@
+extends layout
+
+block content
+
+  // jQuery
+  script.
+    $(function($) {
+    
+    // jQuery knob for pan 
+    $(".pan").knob({
+    change: function(value) {
+      socket.emit('panChange', value); 
+    },
+    release: function(value) {
+
+    },
+    cancel: function() {
+
+    },
+    });
+
+    // jQuery knob for tilt 
+    $(".tilt").knob({
+    change: function(value) {
+      socket.emit('tiltChange', value); 
+    },
+    release: function(value) {
+
+    },
+    cancel: function() {
+    },
+    });
+
+    // jQuery button for zeroing
+    $('#returnHome').click(function() {
+      socket.emit('panChange', 0);
+      socket.emit('tiltChange', 0);
+    });
+
+    // socket communication so multiple clients can stay in sync
+    var socket = io();
+    socket.on('panChangeResponse', function(value) {
+      $('.pan')
+        .val(value)
+        .trigger('change')
+    });
+    socket.on('tiltChangeResponse', function(value) {
+      $('.tilt')
+        .val(value)
+        .trigger('change')
+    });
+
+    });
+
+
+
+  .container
+    .jumbotron 
+      h1 Nomeo CAM
+      p Web controlled security cam awesomeness developed by Nomeo Adventures inc.
+
+    div.row
+      .slider
+        div.col-xs-4
+          input.pan(value='0', data-min='-135', data-max='135', data-cursor='true', 
+                    data-width='170', data-angleArc='270', data-angleOffset='225',
+                    data-bgcolor='#3a3f44', data-fgcolor='#f89406')
+    
+      .return-home
+        div.col-xs-4
+          button#returnHome.btn.btn-primary.btn-circle.btn-xl(type="button")
+            i.fa.fa-home
+
+      .slider
+        div.col-xs-4
+          input.tilt(value='0', data-min='-135', data-max='135', data-cursor='true', 
+                     data-width='170', data-angleArc='270', data-angleOffset='225',
+                     data-bgcolor='#3a3f44', data-fgcolor='#f89406')
